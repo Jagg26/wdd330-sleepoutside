@@ -242,6 +242,32 @@ button {
   width: 100%;
 }
 
+/* Discount badge overlay for product image */
+.product-detail figure {
+  position: relative;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: var(--tertiary-color);
+  color: #fff;
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9em;
+  display: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.product-discount {
+  font-size: 0.95em;
+  color: var(--tertiary-color);
+  font-weight: 600;
+  padding: 0.25em 0;
+}
+
 .product-detail h2 {
   margin-bottom: 0.5em;
 }

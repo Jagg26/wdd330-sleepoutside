@@ -38,7 +38,7 @@ export default class CheckoutProcess {
   }
 
   init() {
-    this.list = getLocalStorage(this.key);
+    this.list = getLocalStorage(this.key) || [];
     this.calculateItemSummary();
   }
 
@@ -50,11 +50,11 @@ export default class CheckoutProcess {
     const itemNumElement = document.querySelector(
       this.outputSelector + " #num-items"
     );
-    itemNumElement.innerText = this.list.length;
-    // calculate the total of all the items in the cart
-    const amounts = this.list.map((item) => item.FinalPrice);
-    this.itemTotal = amounts.reduce((sum, item) => sum + item);
-    summaryElement.innerText = `$${this.itemTotal}`;;
+    itemNumElement.innerText = this.list ? this.list.length : 0;
+    // calculate the total of all the items in the cart (safe for empty lists)
+    const amounts = (this.list || []).map((item) => Number(item.FinalPrice) || 0);
+    this.itemTotal = amounts.reduce((sum, item) => sum + item, 0);
+    summaryElement.innerText = `$${this.itemTotal}`;
   }
 
   calculateOrderTotal() {
