@@ -18,12 +18,68 @@ export default class ProductDetails {
     document
       .getElementById("add-to-cart")
       .addEventListener("click", this.addProductToCart.bind(this));
+
+    // wishlist buttons: toggle and move-to-cart
+    const wishlistBtn = document.getElementById("wishlist-btn");
+    const wishlistMoveBtn = document.getElementById("wishlist-move");
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener("click", this.toggleWishlist.bind(this));
+    }
+    if (wishlistMoveBtn) {
+      wishlistMoveBtn.addEventListener("click", this.moveWishlistToCart.bind(this));
+    }
+    // ensure buttons reflect current product wishlist state
+    this.updateWishlistButtons();
   }
 
   addProductToCart() {
     const cartItems = getLocalStorage("so-cart") || [];
     cartItems.push(this.product);
     setLocalStorage("so-cart", cartItems);
+  }
+
+  // wishlist support
+  toggleWishlist() {
+    const key = "so-wishlist";
+    const list = getLocalStorage(key) || [];
+    const exists = list.find((p) => String(p.Id) === String(this.product.Id));
+    if (exists) {
+      const newList = list.filter((p) => String(p.Id) !== String(this.product.Id));
+      setLocalStorage(key, newList);
+    } else {
+      list.push(this.product);
+      setLocalStorage(key, list);
+    }
+    this.updateWishlistButtons();
+  }
+
+  moveWishlistToCart() {
+    const wishlistKey = "so-wishlist";
+    const cartKey = "so-cart";
+    const wishlist = getLocalStorage(wishlistKey) || [];
+    const newWishlist = wishlist.filter((p) => String(p.Id) !== String(this.product.Id));
+    setLocalStorage(wishlistKey, newWishlist);
+
+    const cart = getLocalStorage(cartKey) || [];
+    cart.push(this.product);
+    setLocalStorage(cartKey, cart);
+
+    // reflect state changes
+    this.updateWishlistButtons();
+  }
+
+  updateWishlistButtons() {
+    const wishlistBtn = document.getElementById("wishlist-btn");
+    const wishlistMoveBtn = document.getElementById("wishlist-move");
+    const wishlist = getLocalStorage("so-wishlist") || [];
+    const inWishlist = wishlist.some((p) => String(p.Id) === String(this.product.Id));
+    if (wishlistBtn) {
+      wishlistBtn.textContent = inWishlist ? "Remove from Wishlist" : "Add to Wishlist";
+      wishlistBtn.setAttribute("aria-pressed", inWishlist ? "true" : "false");
+    }
+    if (wishlistMoveBtn) {
+      wishlistMoveBtn.style.display = inWishlist ? "inline-block" : "none";
+    }
   }
 
   renderProductDetails() {
